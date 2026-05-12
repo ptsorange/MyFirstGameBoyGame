@@ -1,0 +1,11 @@
+.venv/
+bin/
+lib/
+include/
+examples/
+*.o
+*.lst
+*.map
+*.gb
+*.ihx
+*.sym
