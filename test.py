@@ -18,15 +18,14 @@ if width == 16:
                 r, g, b = rgb_img.getpixel((px, py))
                 
                 brightness = (r + g + b) // 3
-                if brightness < 64:
-                    color = 3 
-                elif brightness < 128:
-                    color = 2 
-                elif brightness < 192:
-                    color = 1
+                if brightness > 200:
+                    color = 0  # White
+                elif brightness > 120:
+                    color = 1  # Light Gray
+                elif brightness > 60:
+                    color = 2  # Dark Gray
                 else:
-                    color = 0
-
+                    color = 3  # Black
                 if color & 0x01:
                     low_byte |= (1 << (7 - x))
                 if color & 0x02:
