@@ -45,6 +45,7 @@ void main(void) {
   int px = PLAYER_START_X;
   int py = PLAYER_START_Y;
   int force = 0;
+  int current_dir = 0; // 0: front, 1: left, 2: right
 
   set_bkg_data(FT1, 4, floorTile);
   set_bkg_data(AIR, 4, airTile);
@@ -75,12 +76,16 @@ void main(void) {
 
     if (py > DEATH_Y) {
       resetGame(&px, &py, &camX, &force, &oldBlock);
+      current_dir = 0;
+      set_sprite_data(TILE_PLAYER, 4, playerTile);
       continue;
     }
 
     if (map[footY][leftX] == SPK || map[footY][rightX] == SPK || 
         map[topY][leftX] == SPK || map[topY][rightX] == SPK) {
       resetGame(&px, &py, &camX, &force, &oldBlock);
+      current_dir = 0;
+      set_sprite_data(TILE_PLAYER, 4, playerTile);
       continue;
     }
 
@@ -147,12 +152,26 @@ void main(void) {
       }
     }
 
+    // 向きの更新
+    int next_dir = 0;
+    if ((input & J_LEFT) && (input & J_RIGHT)) next_dir = 0;
+    else if (input & J_LEFT) next_dir = 1;
+    else if (input & J_RIGHT) next_dir = 2;
+
+    if (next_dir != current_dir) {
+      current_dir = next_dir;
+      if (current_dir == 0) set_sprite_data(TILE_PLAYER, 4, playerTile);
+      else if (current_dir == 1) set_sprite_data(TILE_PLAYER, 4, playerLTile);
+      else if (current_dir == 2) set_sprite_data(TILE_PLAYER, 4, playerRTile);
+    }
+
     camX = max(0, camX);
     camX = min((WORLD_WIDTH - (SCREEN_WIDTH / BLOCK_SIZE)) * BLOCK_SIZE, camX);
     px = max(PLAYER_MIN_X, px);
     px = min(PLAYER_MAX_X, px);
 
     wait_vbl_done();
+
 
     move_bkg(camX, 0);
     setSpritePos(TILE_PLAYER, px, py, 2, 2);
