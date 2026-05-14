@@ -136,6 +136,11 @@ void main(void) {
     px = max(PLAYER_MIN_X, px);
     px = min(PLAYER_MAX_X, px);
 
+    wait_vbl_done();
+
+    move_bkg(camX, 0);
+    setSpritePos(TILE_PLAYER, px, py, 2, 2);
+
     // 背景
     if (block != oldBlock) {
       int newBlockX =
@@ -147,9 +152,5 @@ void main(void) {
       }
       oldBlock = block;
     }
-
-    setSpritePos(TILE_PLAYER, px, py, 2, 2);
-    move_bkg(camX, 0);
-    wait_vbl_done();
   }
 }
