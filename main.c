@@ -31,24 +31,24 @@ const unsigned char airTile[] = {
 
 // マップのデータ
 const int map[9][23] = {
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR,
+    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1,
+     AIR, AIR, FT1, AIR, AIR, FT1, AIR, AIR, AIR, AIR, AIR},
+    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1,
+     AIR, AIR, FT1, AIR, AIR, FT1, AIR, AIR, AIR, AIR, AIR},
+    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1,
+     AIR, AIR, FT1, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR},
+    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1,
      AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR},
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR,
-     AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR},
-    {AIR, AIR, FT1, AIR, FT1, AIR, FT1, FT1, FT1, AIR, FT1, AIR,
-     AIR, AIR, FT1, AIR, AIR, AIR, AIR, FT1, AIR, AIR, AIR},
-    {AIR, AIR, FT1, AIR, FT1, AIR, FT1, AIR, AIR, AIR, FT1, AIR,
-     AIR, AIR, FT1, AIR, AIR, AIR, FT1, AIR, FT1, AIR, AIR},
-    {AIR, AIR, FT1, FT1, FT1, AIR, FT1, FT1, FT1, AIR, FT1, AIR,
-     AIR, AIR, FT1, AIR, AIR, AIR, FT1, AIR, FT1, AIR, AIR},
-    {AIR, AIR, FT1, AIR, FT1, AIR, FT1, AIR, AIR, AIR, FT1, AIR,
-     AIR, AIR, FT1, AIR, AIR, AIR, FT1, AIR, FT1, AIR, AIR},
-    {AIR, AIR, FT1, AIR, FT1, AIR, FT1, FT1, FT1, AIR, FT1, FT1,
-     FT1, AIR, FT1, FT1, FT1, AIR, AIR, FT1, AIR, AIR, AIR},
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR,
-     AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR},
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR,
-     AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR}};
+    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1, AIR, AIR, AIR,
+     AIR, AIR, AIR, AIR, AIR, FT1, AIR, AIR, AIR, AIR, AIR},
+    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1, FT1, AIR, AIR, AIR,
+     AIR, AIR, FT1, AIR, AIR, FT1, AIR, AIR, FT1, AIR, AIR},
+    {AIR, AIR, AIR, AIR, AIR, AIR, FT1, FT1, FT1, AIR, AIR, FT1,
+     AIR, AIR, FT1, AIR, AIR, FT1, AIR, FT1, FT1, FT1, AIR},
+    {FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1,
+     FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1},
+    {FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1,
+     FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1}};
 
 void setSpritePos(int sprite, int x, int y, int w, int h) {
   int i = 0;
@@ -61,13 +61,13 @@ void setSpritePos(int sprite, int x, int y, int w, int h) {
 }
 
 void setBkgTile(int tile_index, int x, int y) {
-  int screen_x = x * 2;
-  int screen_y = y * 2;
+  int vram_x = (x * 2) % 32;
+  int vram_y = y * 2;
 
-  set_bkg_tile_xy(screen_x, screen_y, tile_index);
-  set_bkg_tile_xy(screen_x + 1, screen_y, tile_index + 1);
-  set_bkg_tile_xy(screen_x, screen_y + 1, tile_index + 2);
-  set_bkg_tile_xy(screen_x + 1, screen_y + 1, tile_index + 3);
+  set_bkg_tile_xy(vram_x, vram_y, tile_index);
+  set_bkg_tile_xy((vram_x + 1) % 32, vram_y, tile_index + 1);
+  set_bkg_tile_xy(vram_x, vram_y + 1, tile_index + 2);
+  set_bkg_tile_xy((vram_x + 1) % 32, vram_y + 1, tile_index + 3);
 }
 
 void main(void) {
@@ -75,8 +75,16 @@ void main(void) {
   int block = 0;
   int oldBlock = 0;
 
+  int speed = 2;
+
+  int px = 16;
+  int py = 80;
+
+  int force = 0;
+
   set_bkg_data(0, 4, floorTile);
-  set_bkg_data(4, 1, airTile);
+  set_bkg_data(4, 4, airTile);
+  set_sprite_data(8, 4, playerTile);
 
   for (int y = 0; y < 9; y++) {
     for (int x = 0; x < 11; x++) {
@@ -84,29 +92,118 @@ void main(void) {
     }
   }
 
+  for (int i = 0; i < 4; i++) {
+    set_sprite_tile(i + 8, i + 8);
+  }
+
+  SHOW_SPRITES;
   SHOW_BKG;
   DISPLAY_ON;
 
   while (1) {
     uint8_t input = joypad();
-    block = (int)(camX / 16);
-    if (input & J_LEFT) {
-      if (camX > 0)
-        camX--;
+    block = camX / 16;
+
+    int worldX = px + camX - 8;
+    int worldY = py - 16;
+
+    int footY = (worldY + 16) / 16;
+    int leftX = worldX / 16;
+    int rightX = (worldX + 15) / 16;
+
+    if (map[footY][leftX] == AIR && map[footY][rightX] == AIR) {
+      force++;
+    } else {
+      if (input & J_UP) {
+        int worldX = px + camX - 8;
+        int worldY = py - 16;
+
+        int nextTopY = (worldY - 3) / 16;
+        int leftX = worldX / 16;
+        int rightX = (worldX + 15) / 16;
+
+        if (map[nextTopY][leftX] == AIR && map[nextTopY][rightX] == AIR) {
+          force = -10;
+        }
+      } else {
+        force = 0;
+        py -= py % 16;
+      }
     }
+
+    // --- 垂直移動の計算 ---
+    py += force; // まず移動させる
+
+    // 上昇中に頭をぶつけたかチェック
+    if (force < 0) {
+      int checkTopY = (py - 16) / 16; // 移動後の頭上のマップ位置
+      if (map[checkTopY][leftX] == FT1 || map[checkTopY][rightX] == FT1) {
+        force = 0;                      // 上昇を止める
+        py = (checkTopY + 1) * 16 + 16; // 天井にめり込まないよう位置を補正
+      }
+    }
+
     if (input & J_RIGHT) {
-      if (camX < 208)
-        camX++;
+      int worldX = px + camX - 8;
+      int worldY = py - 16;
+
+      int nextRightX = (worldX + 16) / 16;
+      int topY = worldY / 16;
+      int bottomY = (worldY + 15) / 16;
+
+      if (map[topY][nextRightX] == AIR && map[bottomY][nextRightX] == AIR) {
+        int maxCamX = (worldXSize - 10) * 16;
+        if (camX >= maxCamX || px < 80) {
+          px += speed;
+        } else {
+          camX += speed;
+        }
+      }
     }
-    if (oldBlock != block) {
-      for (int y = 0; y < 9; y++) {
-        for (int x = 0; x < 11; x++) {
-          setBkgTile(map[y][x+block], x, y);
+
+    if (input & J_LEFT) {
+      int worldX = px + camX - 8;
+      int worldY = py - 16;
+
+      int nextLeftX = (worldX - 1) / 16;
+      int topY = worldY / 16;
+      int bottomY = (worldY + 15) / 16;
+
+      if (map[topY][nextLeftX] == AIR && map[bottomY][nextLeftX] == AIR) {
+        if (camX == 0 || px > 80) {
+          px -= speed;
+        } else {
+          camX -= speed;
+        }
+      }
+    }
+
+    camX = max(0, camX);
+    camX = min((worldXSize - 10) * 16, camX);
+    px = max(8, px);
+    px = min(152, px);
+
+    if (block != oldBlock) {
+      if (block > oldBlock) {
+        int newBlockX = block + 10;
+        if (newBlockX < 23) {
+          for (int y = 0; y < 9; y++) {
+            setBkgTile(map[y][newBlockX], newBlockX, y);
+          }
+        }
+      } else {
+        int newBlockX = block;
+        if (newBlockX >= 0) {
+          for (int y = 0; y < 9; y++) {
+            setBkgTile(map[y][newBlockX], newBlockX, y);
+          }
         }
       }
       oldBlock = block;
     }
-    move_bkg(camX % 16, 0);
+
+    setSpritePos(8, px, py, 2, 2);
+    move_bkg(camX, 0);
     wait_vbl_done();
   }
 }

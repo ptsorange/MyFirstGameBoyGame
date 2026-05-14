@@ -1,2 +1,5 @@
 while True:
-  print(int(int(input())/16))
+  a=int(input())
+  for i in range(a):
+    a+=i
+  print(a)
