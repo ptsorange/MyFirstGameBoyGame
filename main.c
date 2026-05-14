@@ -1,65 +1,17 @@
 #include "main.h"
 
-// プレイヤーのテクスチャ
-const unsigned char playerTile[] = {
-    0x1f, 0x1f, 0x20, 0x20, 0x40, 0x40, 0x80, 0x80, 0x84, 0x84, 0x84,
-    0x84, 0x84, 0x84, 0x84, 0x84, 0xf8, 0xf8, 0x4,  0x4,  0x2,  0x2,
-    0x1,  0x1,  0x21, 0x21, 0x21, 0x21, 0x21, 0x21, 0x21, 0x21, 0x80,
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x40, 0x40,
-    0x20, 0x20, 0x1f, 0x1f, 0x1,  0x1,  0x1,  0x1,  0x1,  0x1,  0x1,
-    0x1,  0x1,  0x1,  0x2,  0x2,  0x4,  0x4,  0xf8, 0xf8,
-};
-
-// 床のテクスチャ
-const unsigned char floorTile[] = {
-    0xff, 0x0,  0xff, 0x7f, 0xff, 0x7f, 0xff, 0x7f, 0xff, 0x7f, 0xff,
-    0x7f, 0xff, 0x7f, 0x8f, 0x7f, 0xff, 0x0,  0xff, 0xfe, 0xf9, 0xfe,
-    0xe7, 0xfe, 0xcf, 0xfe, 0xbf, 0xfe, 0x7f, 0xfe, 0x7f, 0xfe, 0xe0,
-    0x7f, 0xfe, 0x7f, 0xff, 0x7f, 0xff, 0x7f, 0xff, 0x7f, 0xff, 0x7f,
-    0xff, 0x7f, 0xff, 0x0,  0xff, 0xfe, 0x7f, 0xfe, 0x7f, 0xfe, 0x3f,
-    0xfe, 0xbf, 0xfe, 0xbf, 0xfe, 0xbf, 0xfe, 0xff, 0x0,
-};
-
-// 空気のテクスチャ
-const unsigned char airTile[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-// マップのデータ
-const int map[9][23] = {
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1,
-     AIR, AIR, FT1, AIR, AIR, FT1, AIR, AIR, AIR, AIR, AIR},
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1,
-     AIR, AIR, FT1, AIR, AIR, FT1, AIR, AIR, AIR, AIR, AIR},
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1,
-     AIR, AIR, FT1, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR},
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1,
-     AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR},
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1, AIR, AIR, AIR,
-     AIR, AIR, AIR, AIR, AIR, FT1, AIR, AIR, AIR, AIR, AIR},
-    {AIR, AIR, AIR, AIR, AIR, AIR, AIR, FT1, FT1, AIR, AIR, AIR,
-     AIR, AIR, FT1, AIR, AIR, FT1, AIR, AIR, FT1, AIR, AIR},
-    {AIR, AIR, AIR, AIR, AIR, AIR, FT1, FT1, FT1, AIR, AIR, FT1,
-     AIR, AIR, FT1, AIR, AIR, FT1, AIR, FT1, FT1, FT1, AIR},
-    {FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1,
-     FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1},
-    {FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1,
-     FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1, FT1}};
-
+// スクリプトの位置をセット
 void setSpritePos(int sprite, int x, int y, int w, int h) {
   int i = 0;
   for (int w1 = 0; w1 < w; w1++) {
     for (int h1 = 0; h1 < h; h1++) {
-      move_sprite(sprite + i, x + (h1 * 8), y + (w1 * 8));
+      move_sprite(sprite + i, x + (h1 * TILE_SIZE), y + (w1 * TILE_SIZE));
       i++;
     }
   }
 }
 
+// タイルの位置をセット
 void setBkgTile(int tile_index, int x, int y) {
   int vram_x = (x * 2) % 32;
   int vram_y = y * 2;
@@ -75,25 +27,22 @@ void main(void) {
   int block = 0;
   int oldBlock = 0;
 
-  int speed = 2;
-
-  int px = 16;
-  int py = 80;
-
+  int px = PLAYER_START_X;
+  int py = PLAYER_START_Y;
   int force = 0;
 
-  set_bkg_data(0, 4, floorTile);
-  set_bkg_data(4, 4, airTile);
-  set_sprite_data(8, 4, playerTile);
+  set_bkg_data(FT1, 4, floorTile);
+  set_bkg_data(AIR, 4, airTile);
+  set_sprite_data(TILE_PLAYER, 4, playerTile);
 
-  for (int y = 0; y < 9; y++) {
-    for (int x = 0; x < 11; x++) {
+  for (int y = 0; y < WORLD_HEIGHT; y++) {
+    for (int x = 0; x < SCREEN_BLOCK_WIDTH; x++) {
       setBkgTile(map[y][x], x, y);
     }
   }
 
   for (int i = 0; i < 4; i++) {
-    set_sprite_tile(i + 8, i + 8);
+    set_sprite_tile(i + TILE_PLAYER, i + TILE_PLAYER);
   }
 
   SHOW_SPRITES;
@@ -102,107 +51,106 @@ void main(void) {
 
   while (1) {
     uint8_t input = joypad();
-    block = camX / 16;
+    block = camX / BLOCK_SIZE;
 
-    int worldX = px + camX - 8;
-    int worldY = py - 16;
+    int worldX = px + camX - TILE_SIZE;
+    int worldY = py - BLOCK_SIZE;
 
-    int footY = (worldY + 16) / 16;
-    int leftX = worldX / 16;
-    int rightX = (worldX + 15) / 16;
+    int footY = (worldY + BLOCK_SIZE) / BLOCK_SIZE;
+    int leftX = worldX / BLOCK_SIZE;
+    int rightX = (worldX + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
+    // 重力とジャンプ
     if (map[footY][leftX] == AIR && map[footY][rightX] == AIR) {
-      force++;
-    } else {
-      if (input & J_UP) {
-        int worldX = px + camX - 8;
-        int worldY = py - 16;
+      if (force < GRAVITY_MAX)
+        force++;
+    }
+    py += force;
 
-        int nextTopY = (worldY - 3) / 16;
-        int leftX = worldX / 16;
-        int rightX = (worldX + 15) / 16;
-
-        if (map[nextTopY][leftX] == AIR && map[nextTopY][rightX] == AIR) {
-          force = -10;
-        }
-      } else {
+    worldY = py - BLOCK_SIZE;
+    int newFootY = (worldY + BLOCK_SIZE) / BLOCK_SIZE;
+    if (map[newFootY][leftX] == FT1 || map[newFootY][rightX] == FT1) {
+      if (force > 0) {
         force = 0;
-        py -= py % 16;
+        py = newFootY * BLOCK_SIZE;
+      }
+
+      if (input & J_UP) {
+        int nextTopY = (worldY - 3) / BLOCK_SIZE;
+        if (map[nextTopY][leftX] == AIR && map[nextTopY][rightX] == AIR) {
+          force = JUMP_FORCE;
+        }
       }
     }
 
-    // --- 垂直移動の計算 ---
-    py += force; // まず移動させる
-
-    // 上昇中に頭をぶつけたかチェック
     if (force < 0) {
-      int checkTopY = (py - 16) / 16; // 移動後の頭上のマップ位置
+      int checkTopY = (py - BLOCK_SIZE) / BLOCK_SIZE;
       if (map[checkTopY][leftX] == FT1 || map[checkTopY][rightX] == FT1) {
-        force = 0;                      // 上昇を止める
-        py = (checkTopY + 1) * 16 + 16; // 天井にめり込まないよう位置を補正
+        force = 0;
+        py = (checkTopY + 1) * BLOCK_SIZE + BLOCK_SIZE;
       }
     }
 
-    if (input & J_RIGHT) {
-      int worldX = px + camX - 8;
-      int worldY = py - 16;
+    py += force;
 
-      int nextRightX = (worldX + 16) / 16;
-      int topY = worldY / 16;
-      int bottomY = (worldY + 15) / 16;
+    // 天井の当たり判定
+    if (force < 0) {
+      int checkTopY = (py - BLOCK_SIZE) / BLOCK_SIZE;
+      if (map[checkTopY][leftX] == FT1 || map[checkTopY][rightX] == FT1) {
+        force = 0;
+        py = (checkTopY + 1) * BLOCK_SIZE + BLOCK_SIZE;
+      }
+    }
+
+    // 右
+    if (input & J_RIGHT) {
+      int nextRightX = (worldX + BLOCK_SIZE) / BLOCK_SIZE;
+      int topY = worldY / BLOCK_SIZE;
+      int bottomY = (worldY + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
       if (map[topY][nextRightX] == AIR && map[bottomY][nextRightX] == AIR) {
-        int maxCamX = (worldXSize - 10) * 16;
-        if (camX >= maxCamX || px < 80) {
-          px += speed;
+        int maxCamX = (WORLD_WIDTH - (SCREEN_WIDTH / BLOCK_SIZE)) * BLOCK_SIZE;
+        if (camX >= maxCamX || px < SCREEN_CENTER_X) {
+          px += PLAYER_SPEED;
         } else {
-          camX += speed;
+          camX += PLAYER_SPEED;
         }
       }
     }
 
+    // 左
     if (input & J_LEFT) {
-      int worldX = px + camX - 8;
-      int worldY = py - 16;
-
-      int nextLeftX = (worldX - 1) / 16;
-      int topY = worldY / 16;
-      int bottomY = (worldY + 15) / 16;
+      int nextLeftX = (worldX - 1) / BLOCK_SIZE;
+      int topY = worldY / BLOCK_SIZE;
+      int bottomY = (worldY + BLOCK_SIZE - 1) / BLOCK_SIZE;
 
       if (map[topY][nextLeftX] == AIR && map[bottomY][nextLeftX] == AIR) {
-        if (camX == 0 || px > 80) {
-          px -= speed;
+        if (camX == 0 || px > SCREEN_CENTER_X) {
+          px -= PLAYER_SPEED;
         } else {
-          camX -= speed;
+          camX -= PLAYER_SPEED;
         }
       }
     }
 
     camX = max(0, camX);
-    camX = min((worldXSize - 10) * 16, camX);
-    px = max(8, px);
-    px = min(152, px);
+    camX = min((WORLD_WIDTH - (SCREEN_WIDTH / BLOCK_SIZE)) * BLOCK_SIZE, camX);
+    px = max(PLAYER_MIN_X, px);
+    px = min(PLAYER_MAX_X, px);
 
+    // 背景
     if (block != oldBlock) {
-      if (block > oldBlock) {
-        int newBlockX = block + 10;
-        if (newBlockX < 23) {
-          for (int y = 0; y < 9; y++) {
-            setBkgTile(map[y][newBlockX], newBlockX, y);
-          }
-        }
-      } else {
-        int newBlockX = block;
-        if (newBlockX >= 0) {
-          for (int y = 0; y < 9; y++) {
-            setBkgTile(map[y][newBlockX], newBlockX, y);
-          }
+      int newBlockX =
+          (block > oldBlock) ? block + (SCREEN_WIDTH / BLOCK_SIZE) : block;
+      if (newBlockX >= 0 && newBlockX < WORLD_WIDTH) {
+        for (int y = 0; y < WORLD_HEIGHT; y++) {
+          setBkgTile(map[y][newBlockX], newBlockX, y);
         }
       }
       oldBlock = block;
     }
 
-    setSpritePos(8, px, py, 2, 2);
+    setSpritePos(TILE_PLAYER, px, py, 2, 2);
     move_bkg(camX, 0);
     wait_vbl_done();
   }
