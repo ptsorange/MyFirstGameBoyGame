@@ -45,4 +45,6 @@ extern const unsigned char playerTile[];
 extern const unsigned char floorTile[];
 extern const unsigned char airTile[];
 extern const unsigned char spikeTile[];
+extern const unsigned char playerLTile[];
+extern const unsigned char playerRTile[];
 extern const int map[WORLD_HEIGHT][WORLD_WIDTH];

@@ -27,9 +27,8 @@ void resetGame(int *px, int *py, int *camX, int *force, int *oldBlock) {
   *py = PLAYER_START_Y;
   *camX = 0;
   *force = 0;
-  *oldBlock = -1; // Force background refresh
+  *oldBlock = -1;
 
-  // Clear background and draw initial state
   for (int y = 0; y < WORLD_HEIGHT; y++) {
     for (int x = 0; x < SCREEN_BLOCK_WIDTH; x++) {
       setBkgTile(map[y][x], x, y);
@@ -74,14 +73,11 @@ void main(void) {
     int rightX = (worldX + BLOCK_SIZE - 1) / BLOCK_SIZE;
     int topY = worldY / BLOCK_SIZE;
 
-    // Game Over Conditions
-    // 1. Pit
     if (py > DEATH_Y) {
       resetGame(&px, &py, &camX, &force, &oldBlock);
       continue;
     }
 
-    // 2. Spikes (check center and feet)
     if (map[footY][leftX] == SPK || map[footY][rightX] == SPK || 
         map[topY][leftX] == SPK || map[topY][rightX] == SPK) {
       resetGame(&px, &py, &camX, &force, &oldBlock);
@@ -108,14 +104,6 @@ void main(void) {
         if (map[nextTopY][leftX] == AIR && map[nextTopY][rightX] == AIR) {
           force = JUMP_FORCE;
         }
-      }
-    }
-
-    if (force < 0) {
-      int checkTopY = (py - BLOCK_SIZE) / BLOCK_SIZE;
-      if (map[checkTopY][leftX] == FT1 || map[checkTopY][rightX] == FT1) {
-        force = 0;
-        py = (checkTopY + 1) * BLOCK_SIZE + BLOCK_SIZE;
       }
     }
 
