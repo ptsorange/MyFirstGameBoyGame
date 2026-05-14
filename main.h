@@ -22,7 +22,7 @@
 
 // 物理
 #define GRAVITY_MAX 4
-#define JUMP_FORCE -8
+#define JUMP_FORCE -10
 #define PLAYER_SPEED 2
 #define PLAYER_START_X 16
 #define PLAYER_START_Y 80

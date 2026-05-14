@@ -91,8 +91,6 @@ void main(void) {
       }
     }
 
-    py += force;
-
     // 天井の当たり判定
     if (force < 0) {
       int checkTopY = (py - BLOCK_SIZE) / BLOCK_SIZE;
