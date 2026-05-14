@@ -5,7 +5,7 @@
 // ワールド、スクリーンの大きさ
 #define SCREEN_WIDTH 160
 #define SCREEN_HEIGHT 144
-#define WORLD_WIDTH 23
+#define WORLD_WIDTH 50
 #define WORLD_HEIGHT 9
 #define TILE_SIZE 8
 #define BLOCK_SIZE 16
@@ -19,6 +19,7 @@
 #define FT1 0
 #define AIR 4
 #define TILE_PLAYER 8
+#define SPK 12
 
 // 物理
 #define GRAVITY_MAX 4
@@ -41,4 +42,5 @@ void setBkgTile(int tile_index, int x, int y);
 extern const unsigned char playerTile[];
 extern const unsigned char floorTile[];
 extern const unsigned char airTile[];
+extern const unsigned char spikeTile[];
 extern const int map[WORLD_HEIGHT][WORLD_WIDTH];

@@ -34,6 +34,7 @@ void main(void) {
   set_bkg_data(FT1, 4, floorTile);
   set_bkg_data(AIR, 4, airTile);
   set_sprite_data(TILE_PLAYER, 4, playerTile);
+  set_bkg_data(SPK, 4, spikeTile);
 
   for (int y = 0; y < WORLD_HEIGHT; y++) {
     for (int x = 0; x < SCREEN_BLOCK_WIDTH; x++) {
