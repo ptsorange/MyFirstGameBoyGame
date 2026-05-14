@@ -27,6 +27,7 @@
 #define PLAYER_SPEED 2
 #define PLAYER_START_X 16
 #define PLAYER_START_Y 80
+#define DEATH_Y 160
 
 // Min/Max のマクロ
 #ifndef min
@@ -38,6 +39,7 @@
 
 void setSpritePos(int sprite, int x, int y, int w, int h);
 void setBkgTile(int tile_index, int x, int y);
+void resetGame(int *px, int *py, int *camX, int *force, int *oldBlock);
 
 extern const unsigned char playerTile[];
 extern const unsigned char floorTile[];

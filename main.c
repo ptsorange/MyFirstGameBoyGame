@@ -22,6 +22,22 @@ void setBkgTile(int tile_index, int x, int y) {
   set_bkg_tile_xy((vram_x + 1) % 32, vram_y + 1, tile_index + 3);
 }
 
+void resetGame(int *px, int *py, int *camX, int *force, int *oldBlock) {
+  *px = PLAYER_START_X;
+  *py = PLAYER_START_Y;
+  *camX = 0;
+  *force = 0;
+  *oldBlock = -1; // Force background refresh
+
+  // Clear background and draw initial state
+  for (int y = 0; y < WORLD_HEIGHT; y++) {
+    for (int x = 0; x < SCREEN_BLOCK_WIDTH; x++) {
+      setBkgTile(map[y][x], x, y);
+    }
+  }
+  move_bkg(0, 0);
+}
+
 void main(void) {
   int camX = 0;
   int block = 0;
@@ -36,11 +52,7 @@ void main(void) {
   set_sprite_data(TILE_PLAYER, 4, playerTile);
   set_bkg_data(SPK, 4, spikeTile);
 
-  for (int y = 0; y < WORLD_HEIGHT; y++) {
-    for (int x = 0; x < SCREEN_BLOCK_WIDTH; x++) {
-      setBkgTile(map[y][x], x, y);
-    }
-  }
+  resetGame(&px, &py, &camX, &force, &oldBlock);
 
   for (int i = 0; i < 4; i++) {
     set_sprite_tile(i + TILE_PLAYER, i + TILE_PLAYER);
@@ -60,6 +72,21 @@ void main(void) {
     int footY = (worldY + BLOCK_SIZE) / BLOCK_SIZE;
     int leftX = worldX / BLOCK_SIZE;
     int rightX = (worldX + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    int topY = worldY / BLOCK_SIZE;
+
+    // Game Over Conditions
+    // 1. Pit
+    if (py > DEATH_Y) {
+      resetGame(&px, &py, &camX, &force, &oldBlock);
+      continue;
+    }
+
+    // 2. Spikes (check center and feet)
+    if (map[footY][leftX] == SPK || map[footY][rightX] == SPK || 
+        map[topY][leftX] == SPK || map[topY][rightX] == SPK) {
+      resetGame(&px, &py, &camX, &force, &oldBlock);
+      continue;
+    }
 
     // 重力とジャンプ
     if (map[footY][leftX] == AIR && map[footY][rightX] == AIR) {
